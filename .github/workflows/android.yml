@@ -33,7 +33,7 @@ jobs:
           haxelib install openfl 9.5.2 --quiet
           haxelib install flixel 6.1.2 --quiet
           haxelib install flixel-addons 4.0.1 --quiet
-          haxelib install flixel-ui 2.6.1 --quiet
+          haxelib install flixel-ui 2.6.2 --quiet
           haxelib install hscript 2.5.0 --quiet
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
 
