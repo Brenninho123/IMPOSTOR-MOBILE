@@ -153,9 +153,7 @@ class CharacterEditorState extends MusicBeatState
 
 		FlxG.camera.follow(camFollow);
 
-		var tabs = [
-			{name: 'Settings', label: 'Settings'},
-		];
+		var tabs = [{name: 'Settings', label: 'Settings'}];
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
 		UI_box.cameras = [camMenu];
@@ -431,7 +429,6 @@ class CharacterEditorState extends MusicBeatState
 				animationNameInputText.text = anim.name;
 				animationLoopCheckBox.checked = anim.loop;
 				animationNameFramerate.value = anim.fps;
-
 				var indicesStr:String = anim.indices.toString();
 				animationIndicesInputText.text = indicesStr.substr(1, indicesStr.length - 2);
 			});
@@ -920,6 +917,7 @@ class CharacterEditorState extends MusicBeatState
 			textAnim.text = '';
 		}
 
+		#if desktop
 		var inputTexts:Array<FlxUIInputText> = [
 			animationInputText,
 			imageInputText,
@@ -932,7 +930,6 @@ class CharacterEditorState extends MusicBeatState
 		{
 			if (inputTexts[i].hasFocus)
 			{
-				#if desktop
 				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null)
 				{
 					inputTexts[i].text = ClipboardAdd(inputTexts[i].text);
@@ -945,18 +942,14 @@ class CharacterEditorState extends MusicBeatState
 				FlxG.sound.muteKeys = [];
 				FlxG.sound.volumeDownKeys = [];
 				FlxG.sound.volumeUpKeys = [];
-				#end
-
 				super.update(elapsed);
 				return;
 			}
 		}
 
-		#if desktop
 		FlxG.sound.muteKeys = TitleState.muteKeys;
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
-		#end
 
 		if (!charDropDown.dropPanel.visible)
 		{
@@ -969,9 +962,7 @@ class CharacterEditorState extends MusicBeatState
 					MusicBeatState.switchState(new editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
-				#if desktop
 				FlxG.mouse.visible = false;
-				#end
 				return;
 			}
 
@@ -1032,13 +1023,16 @@ class CharacterEditorState extends MusicBeatState
 						var negaMult:Int = (i % 2 == 1) ? -1 : 1;
 
 						char.animationsArray[curAnim].offsets[arrayVal] += negaMult * multiplier;
-						char.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0],
+						char.addOffset(char.animationsArray[curAnim].anim,
+							char.animationsArray[curAnim].offsets[0],
 							char.animationsArray[curAnim].offsets[1]);
-						ghostChar.addOffset(char.animationsArray[curAnim].anim, char.animationsArray[curAnim].offsets[0],
+						ghostChar.addOffset(char.animationsArray[curAnim].anim,
+							char.animationsArray[curAnim].offsets[0],
 							char.animationsArray[curAnim].offsets[1]);
 
 						char.playAnim(char.animationsArray[curAnim].anim, false);
-						if (ghostChar.animation.curAnim != null && char.animation.curAnim != null
+						if (ghostChar.animation.curAnim != null
+							&& char.animation.curAnim != null
 							&& char.animation.curAnim.name == ghostChar.animation.curAnim.name)
 							ghostChar.playAnim(char.animation.curAnim.name, false);
 
@@ -1047,6 +1041,7 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		}
+		#end
 
 		camMenu.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
