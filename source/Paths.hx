@@ -15,6 +15,10 @@ import openfl.geom.Rectangle;
 import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 #if MODS_ALLOWED
 import sys.FileSystem;
 import sys.io.File;
