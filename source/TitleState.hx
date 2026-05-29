@@ -3,21 +3,18 @@ package;
 import extensions.FixedFlxBGSprite;
 #if desktop
 import Discord.DiscordClient;
-import sys.thread.Thread;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.TransitionData;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.ui.FlxSoundTray;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -49,7 +46,6 @@ class TitleState extends MusicBeatState
 	var starBG:FlxBackdrop;
 
 	var curWacky:Array<String> = [];
-
 	var wackyImage:FlxSprite;
 
 	var easterEggEnabled:Bool = true;
@@ -76,9 +72,6 @@ class TitleState extends MusicBeatState
 		#end
 
 		FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = muteKeys;
-		FlxG.sound.volumeDownKeys = volumeDownKeys;
-		FlxG.sound.volumeUpKeys = volumeUpKeys;
 
 		PlayerSettings.init();
 
@@ -96,7 +89,9 @@ class TitleState extends MusicBeatState
 		if (FlxG.save.data.weekCompleted != null)
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 
+		#if desktop
 		FlxG.mouse.visible = false;
+		#end
 
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());
@@ -259,7 +254,7 @@ class TitleState extends MusicBeatState
 			FlxG.fullscreen = !FlxG.fullscreen;
 		#end
 
-		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
+		var pressedEnter:Bool = controls.ACCEPT;
 
 		#if mobile
 		for (touch in FlxG.touches.list)
