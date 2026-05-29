@@ -40,22 +40,19 @@ jobs:
       - name: Setup Lime
         run: haxelib run lime setup -alias -y
 
-      - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
       - name: Install Android NDK r25c
         run: |
           wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip -q android-ndk-r25c-linux.zip -d $HOME
-          echo "NDK_PATH=$HOME/android-ndk-r25c" >> $GITHUB_ENV
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Configure Lime for Android
         run: |
-          printf '5\n%s\n%s\n%s\n17\n' \
-            "$ANDROID_HOME" \
-            "${{ env.NDK_PATH }}" \
-            "$JAVA_HOME" \
-          | haxelib run lime setup android
+          haxelib run lime config ANDROID_SDK $ANDROID_HOME
+          haxelib run lime config ANDROID_NDK_ROOT $HOME/android-ndk-r25c
+          haxelib run lime config JAVA_HOME $JAVA_HOME
 
       - name: Build Android APK
         run: haxelib run lime build android -release
