@@ -1,0 +1,68 @@
+name: Build Android
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.7
+
+      - name: Install Haxelib dependencies
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install lime 8.3.2 --quiet
+          haxelib install openfl 9.4.1 --quiet
+          haxelib install flixel 6.1.2 --quiet
+          haxelib install flixel-addons 4.0.1 --quiet
+          haxelib install flixel-ui 2.6.1 --quiet
+          haxelib install hscript 2.5.0 --quiet
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git --quiet
+
+      - name: Setup Lime
+        run: haxelib run lime setup -alias -y
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+      - name: Install Android NDK r25c
+        run: |
+          wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          unzip -q android-ndk-r25c-linux.zip -d $HOME
+          echo "NDK_PATH=$HOME/android-ndk-r25c" >> $GITHUB_ENV
+
+      - name: Configure Lime for Android
+        run: |
+          printf '5\n%s\n%s\n%s\n17\n' \
+            "$ANDROID_HOME" \
+            "${{ env.NDK_PATH }}" \
+            "$JAVA_HOME" \
+          | haxelib run lime setup android
+
+      - name: Build Android APK
+        run: haxelib run lime build android -release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VSImpostorV4-Android
+          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
